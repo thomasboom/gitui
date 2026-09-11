@@ -1,7 +1,7 @@
 //TODO: remove in favour of new `filetreelist` crate
 
 use anyhow::{bail, Result};
-use asyncgit::StatusItem;
+use asyncjj::StatusItem;
 use std::{
 	collections::BTreeSet,
 	ffi::OsStr,
@@ -260,7 +260,7 @@ impl Index<usize> for FileTreeItems {
 #[cfg(test)]
 mod tests {
 	use super::*;
-	use asyncgit::StatusItemType;
+	use asyncjj::StatusItemType;
 
 	fn string_vec_to_status(items: &[&str]) -> Vec<StatusItem> {
 		items

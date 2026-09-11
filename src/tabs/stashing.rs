@@ -12,9 +12,9 @@ use crate::{
 	ui::style::SharedTheme,
 };
 use anyhow::Result;
-use asyncgit::{
+use asyncjj::{
 	sync::{self, status::StatusType, RepoPathRef},
-	AsyncGitNotification, AsyncStatus, StatusParams,
+	AsyncJjNotification, AsyncStatus, StatusParams,
 };
 use crossterm::event::Event;
 use ratatui::{
@@ -87,9 +87,9 @@ impl Stashing {
 	///
 	pub fn update_git(
 		&mut self,
-		ev: AsyncGitNotification,
+		ev: AsyncJjNotification,
 	) -> Result<()> {
-		if self.is_visible() && ev == AsyncGitNotification::Status {
+		if self.is_visible() && ev == AsyncJjNotification::Status {
 			let status = self.git_status.last()?;
 			self.index.show()?;
 			self.index.update(&status.items)?;

@@ -14,12 +14,12 @@ use crate::{
 	AsyncNotification,
 };
 use anyhow::Result;
-use asyncgit::{
+use asyncjj::{
 	asyncjob::AsyncSingleJob,
 	sync::{
 		get_commit_info, CommitId, CommitInfo, RepoPathRef, TreeFile,
 	},
-	AsyncGitNotification, AsyncTreeFilesJob,
+	AsyncJjNotification, AsyncTreeFilesJob,
 };
 use crossterm::event::Event;
 use filetreelist::{FileTree, FileTreeItem};
@@ -94,7 +94,7 @@ impl RevisionFilesComponent {
 		if !same_id {
 			self.files = None;
 
-			self.request_files(commit);
+			self.request_files(commit.clone());
 
 			self.revision =
 				Some(get_commit_info(&self.repo.borrow(), &commit)?);
@@ -114,7 +114,7 @@ impl RevisionFilesComponent {
 
 		if matches!(
 			ev,
-			AsyncNotification::Git(AsyncGitNotification::TreeFiles)
+			AsyncNotification::Git(AsyncJjNotification::TreeFiles)
 		) {
 			self.refresh_files()?;
 		}
@@ -150,7 +150,7 @@ impl RevisionFilesComponent {
 						}
 					}
 				} else if let Some(rev) = &self.revision {
-					self.request_files(rev.id);
+					self.request_files(rev.id.clone());
 				}
 			}
 		}
@@ -205,7 +205,10 @@ impl RevisionFilesComponent {
 			self.queue.push(InternalEvent::OpenPopup(
 				StackablePopupOpen::BlameFile(BlameFileOpen {
 					file_path: path,
-					commit_id: self.revision.as_ref().map(|c| c.id),
+					commit_id: self
+						.revision
+						.as_ref()
+						.map(|c| c.id.clone()),
 					selection: None,
 				}),
 			));

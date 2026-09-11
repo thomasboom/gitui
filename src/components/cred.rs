@@ -2,7 +2,7 @@ use anyhow::Result;
 use crossterm::event::Event;
 use ratatui::{layout::Rect, Frame};
 
-use asyncgit::sync::cred::BasicAuthCredential;
+use asyncjj::sync::cred::BasicAuthCredential;
 
 use crate::app::Environment;
 use crate::components::{EventState, InputType, TextInputComponent};

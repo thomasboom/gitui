@@ -11,7 +11,7 @@ use crate::{
 	ui::{self, style::SharedTheme},
 };
 use anyhow::Result;
-use asyncgit::sync::ShowUntrackedFilesConfig;
+use asyncjj::sync::ShowUntrackedFilesConfig;
 use crossterm::event::Event;
 use ratatui::{
 	layout::{Alignment, Rect},

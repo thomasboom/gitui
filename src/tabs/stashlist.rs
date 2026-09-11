@@ -10,7 +10,7 @@ use crate::{
 	strings,
 };
 use anyhow::Result;
-use asyncgit::sync::{self, CommitId, RepoPath, RepoPathRef};
+use asyncjj::sync::{self, CommitId, RepoPath, RepoPathRef};
 use crossterm::event::Event;
 
 pub struct StashList {
@@ -48,8 +48,11 @@ impl StashList {
 
 	fn apply_stash(&self) {
 		if let Some(e) = self.list.selected_entry() {
-			match sync::stash_apply(&self.repo.borrow(), e.id, false)
-			{
+			match sync::stash_apply(
+				&self.repo.borrow(),
+				e.id.clone(),
+				false,
+			) {
 				Ok(()) => {
 					self.queue.push(InternalEvent::TabSwitchStatus);
 				}
@@ -69,7 +72,7 @@ impl StashList {
 			));
 		} else if let Some(e) = self.list.selected_entry() {
 			self.queue.push(InternalEvent::ConfirmAction(
-				Action::StashDrop(vec![e.id]),
+				Action::StashDrop(vec![e.id.clone()]),
 			));
 		}
 	}
@@ -77,7 +80,7 @@ impl StashList {
 	fn pop_stash(&self) {
 		if let Some(e) = self.list.selected_entry() {
 			self.queue.push(InternalEvent::ConfirmAction(
-				Action::StashPop(e.id),
+				Action::StashPop(e.id.clone()),
 			));
 		}
 	}
@@ -86,7 +89,7 @@ impl StashList {
 		if let Some(e) = self.list.selected_entry() {
 			self.queue.push(InternalEvent::OpenPopup(
 				StackablePopupOpen::InspectCommit(
-					InspectCommitOpen::new(e.id),
+					InspectCommitOpen::new(e.id.clone()),
 				),
 			));
 		}
@@ -100,7 +103,7 @@ impl StashList {
 	) -> Result<()> {
 		match action {
 			Action::StashDrop(ids) => self.drop(repo, ids)?,
-			Action::StashPop(id) => self.pop(repo, *id)?,
+			Action::StashPop(id) => self.pop(repo, id.clone())?,
 			_ => (),
 		}
 
@@ -113,7 +116,7 @@ impl StashList {
 		ids: &[CommitId],
 	) -> Result<()> {
 		for id in ids {
-			sync::stash_drop(repo, *id)?;
+			sync::stash_drop(repo, id.clone())?;
 		}
 
 		self.list.clear_marked();

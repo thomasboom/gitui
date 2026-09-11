@@ -13,7 +13,7 @@ use crate::{
 	strings,
 };
 use anyhow::Result;
-use asyncgit::{
+use asyncjj::{
 	sync::{commit_files::OldNew, CommitTags},
 	AsyncCommitFiles, CommitFilesParams,
 };
@@ -75,19 +75,19 @@ impl CommitDetailsComponent {
 			self.compare_details.set_commits(None);
 		}
 
-		self.commit = params;
+		self.commit = params.clone();
 
 		if let Some(id) = params {
-			self.file_tree.set_commit(Some(id.id));
+			self.file_tree.set_commit(Some(id.id.clone()));
 
-			if let Some(other) = id.other {
+			if let Some(other) = id.other.clone() {
 				self.compare_details.set_commits(Some(OldNew {
-					new: id.id,
+					new: id.id.clone(),
 					old: other,
 				}));
 			} else {
 				self.single_details
-					.set_commit(Some(id.id), tags.cloned());
+					.set_commit(Some(id.id.clone()), tags.cloned());
 			}
 
 			if let Some((fetched_id, res)) =
@@ -134,7 +134,7 @@ impl CommitDetailsComponent {
 	}
 
 	fn is_compare(&self) -> bool {
-		self.commit.is_some_and(|p| p.other.is_some())
+		self.commit.as_ref().is_some_and(|p| p.other.is_some())
 	}
 }
 

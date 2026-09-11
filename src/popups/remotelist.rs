@@ -1,6 +1,6 @@
 use std::cell::Cell;
 
-use asyncgit::sync::{get_remote_url, get_remotes, RepoPathRef};
+use asyncjj::sync::{get_remote_url, get_remotes, RepoPathRef};
 use ratatui::{
 	layout::{
 		Alignment, Constraint, Direction, Layout, Margin, Rect,

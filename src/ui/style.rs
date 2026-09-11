@@ -1,6 +1,6 @@
 use crate::ui::syntax_text::DEFAULT_SYNTAX_THEME;
 use anyhow::Result;
-use asyncgit::{DiffLineType, StatusItemType};
+use asyncjj::{DiffLineType, StatusItemType};
 use ratatui::style::{Color, Modifier, Style};
 use ron::ser::{to_string_pretty, PrettyConfig};
 use serde::{Deserialize, Serialize};

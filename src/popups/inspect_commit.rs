@@ -12,9 +12,9 @@ use crate::{
 	strings,
 };
 use anyhow::Result;
-use asyncgit::{
+use asyncjj::{
 	sync::{CommitId, CommitTags},
-	AsyncDiff, AsyncGitNotification, DiffParams, DiffType,
+	AsyncDiff, AsyncJjNotification, DiffParams, DiffType,
 };
 use crossterm::event::Event;
 use ratatui::{
@@ -178,8 +178,9 @@ impl Component for InspectCommitPopup {
 					if let Some(commit_id) = self
 						.open_request
 						.as_ref()
-						.map(|open_commit| open_commit.commit_id)
-					{
+						.map(|open_commit| {
+							open_commit.commit_id.clone()
+						}) {
 						self.hide_stacked(true);
 						self.queue.push(InternalEvent::OpenPopup(
 							StackablePopupOpen::FileTree(
@@ -250,12 +251,12 @@ impl InspectCommitPopup {
 	///
 	pub fn update_git(
 		&mut self,
-		ev: AsyncGitNotification,
+		ev: AsyncJjNotification,
 	) -> Result<()> {
 		if self.is_visible() {
-			if ev == AsyncGitNotification::CommitFiles {
+			if ev == AsyncJjNotification::CommitFiles {
 				self.update()?;
-			} else if ev == AsyncGitNotification::Diff {
+			} else if ev == AsyncJjNotification::Diff {
 				self.update_diff()?;
 			}
 		}
@@ -272,7 +273,7 @@ impl InspectCommitPopup {
 					let diff_params = DiffParams {
 						path: f.path.clone(),
 						diff_type: DiffType::Commit(
-							request.commit_id,
+							request.commit_id.clone(),
 						),
 						options: self.options.borrow().diff_options(),
 					};
@@ -301,7 +302,7 @@ impl InspectCommitPopup {
 	fn update(&mut self) -> Result<()> {
 		if let Some(request) = &self.open_request {
 			self.details.set_commits(
-				Some(request.commit_id.into()),
+				Some(request.commit_id.clone().into()),
 				request.tags.as_ref(),
 			)?;
 			self.update_diff()?;

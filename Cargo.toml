@@ -2,7 +2,7 @@
 name = "gitui"
 version = "0.28.1"
 authors = ["extrawurst <mail@rusticorn.com>"]
-description = "blazing fast terminal-ui for git"
+description = "blazing fast terminal-ui for jujutsu (jj)"
 edition = "2021"
 rust-version = "1.88"
 exclude = [".github/*", ".vscode/*", "assets/*"]
@@ -11,21 +11,19 @@ repository = "https://github.com/gitui-org/gitui"
 readme = "README.md"
 license = "MIT"
 categories = ["command-line-utilities"]
-keywords = ["cli", "git", "gui", "terminal", "ui"]
+keywords = ["cli", "jj", "jujutsu", "gui", "terminal", "ui"]
 build = "build.rs"
 
 [workspace]
 members = [
-  "asyncgit",
+  "asyncjj",
   "filetreelist",
-  "git2-hooks",
-  "git2-testing",
   "scopetime",
 ]
 
 [dependencies]
 anyhow = "1.0"
-asyncgit = { path = "./asyncgit", version = "0.28.1", default-features = false }
+asyncjj = { path = "./asyncjj", version = "0.28.1" }
 backtrace = "0.3"
 base64 = "0.22"
 bitflags = "2.10"
@@ -67,7 +65,6 @@ which = "8.0"
 
 [dev-dependencies]
 env_logger = "0.11"
-git2-testing = { path = "./git2-testing" }
 insta = { version = "1.41.0", features = ["filters"] }
 pretty_assertions = "1.4"
 tempfile = "3"
@@ -79,14 +76,12 @@ chrono = { version = "0.4", default-features = false, features = ["clock"] }
 maintenance = { status = "actively-developed" }
 
 [features]
-default = ["ghemoji", "regex-fancy", "trace-libgit", "vendor-openssl"]
+default = ["ghemoji", "regex-fancy"]
 ghemoji = ["gh-emoji"]
 # regex-* features are mutually exclusive.
 regex-fancy = ["syntect/regex-fancy", "two-face/syntect-fancy"]
 regex-onig = ["syntect/regex-onig", "two-face/syntect-onig"]
 timing = ["scopetime/enabled"]
-trace-libgit = ["asyncgit/trace-libgit"]
-vendor-openssl = ["asyncgit/vendor-openssl"]
 
 # make debug build as fast as release
 # usage of utf8 encoding inside tui

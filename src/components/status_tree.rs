@@ -15,7 +15,7 @@ use crate::{
 	ui::{self, style::SharedTheme},
 };
 use anyhow::Result;
-use asyncgit::{hash, sync::CommitId, StatusItem, StatusItemType};
+use asyncjj::{hash, sync::CommitId, StatusItem, StatusItemType};
 use crossterm::event::Event;
 use ratatui::{layout::Rect, text::Span, Frame};
 use std::{borrow::Cow, cell::Cell, path::Path};
@@ -58,7 +58,7 @@ impl StatusTreeComponent {
 		}
 	}
 
-	pub const fn set_commit(&mut self, revision: Option<CommitId>) {
+	pub fn set_commit(&mut self, revision: Option<CommitId>) {
 		self.revision = revision;
 	}
 
@@ -489,7 +489,9 @@ impl Component for StatusTreeComponent {
 										BlameFileOpen {
 											file_path: status_item
 												.path,
-											commit_id: self.revision,
+											commit_id: self
+												.revision
+												.clone(),
 											selection: None,
 										},
 									),

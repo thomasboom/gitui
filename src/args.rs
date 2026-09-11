@@ -1,6 +1,6 @@
 use crate::bug_report;
 use anyhow::{anyhow, Context, Result};
-use asyncgit::sync::RepoPath;
+use asyncjj::sync::RepoPath;
 use clap::{
 	builder::ArgPredicate, crate_authors, crate_description,
 	crate_name, Arg, Command as ClapApp,

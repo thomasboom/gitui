@@ -9,9 +9,7 @@ use crate::{
 	strings, try_or_popup,
 };
 use anyhow::Result;
-use asyncgit::sync::{
-	self, get_config_string, CommitId, RepoPathRef,
-};
+use asyncjj::sync::{self, get_config_string, CommitId, RepoPathRef};
 use crossterm::event::Event;
 use ratatui::{layout::Rect, Frame};
 
@@ -173,7 +171,7 @@ impl TagCommitPopup {
 
 		let (tag_name, tag_annotation) = self.tag_info();
 
-		if let Some(commit_id) = self.commit_id {
+		if let Some(commit_id) = self.commit_id.clone() {
 			let result = sync::tag_commit(
 				&self.repo.borrow(),
 				&commit_id,

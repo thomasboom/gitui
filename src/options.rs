@@ -1,5 +1,5 @@
 use anyhow::Result;
-use asyncgit::sync::{
+use asyncjj::sync::{
 	diff::DiffOptions, repo_dir, RepoPathRef,
 	ShowUntrackedFilesConfig,
 };
@@ -35,7 +35,7 @@ pub struct Options {
 #[cfg(test)]
 impl Options {
 	pub fn test_env() -> Self {
-		use asyncgit::sync::RepoPath;
+		use asyncjj::sync::RepoPath;
 		Self {
 			repo: RefCell::new(RepoPath::Path(Default::default())),
 			data: Default::default(),

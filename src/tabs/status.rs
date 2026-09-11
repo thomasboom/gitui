@@ -14,13 +14,13 @@ use crate::{
 	ui::style::Theme,
 };
 use anyhow::Result;
-use asyncgit::{
+use asyncjj::{
 	cached,
 	sync::{
 		self, status::StatusType, RepoPath, RepoPathRef, RepoState,
 	},
 	sync::{BranchCompare, CommitId},
-	AsyncDiff, AsyncGitNotification, AsyncStatus, DiffParams,
+	AsyncDiff, AsyncJjNotification, AsyncStatus, DiffParams,
 	DiffType, PushType, StatusItem, StatusParams,
 };
 use crossterm::event::Event;
@@ -430,19 +430,19 @@ impl Status {
 	///
 	pub fn update_git(
 		&mut self,
-		ev: AsyncGitNotification,
+		ev: AsyncJjNotification,
 	) -> Result<()> {
 		if !self.is_visible() {
 			return Ok(());
 		}
 
 		match ev {
-			AsyncGitNotification::Diff => self.update_diff()?,
-			AsyncGitNotification::Status => self.update_status()?,
-			AsyncGitNotification::Branches => self.check_remotes(),
-			AsyncGitNotification::Push
-			| AsyncGitNotification::Pull
-			| AsyncGitNotification::CommitFiles => {
+			AsyncJjNotification::Diff => self.update_diff()?,
+			AsyncJjNotification::Status => self.update_status()?,
+			AsyncJjNotification::Branches => self.check_remotes(),
+			AsyncJjNotification::Push
+			| AsyncJjNotification::Pull
+			| AsyncJjNotification::CommitFiles => {
 				self.branch_compare();
 			}
 			_ => (),

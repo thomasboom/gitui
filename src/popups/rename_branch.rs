@@ -10,7 +10,7 @@ use crate::{
 	strings,
 };
 use anyhow::Result;
-use asyncgit::sync::{self, RepoPathRef};
+use asyncjj::sync::{self, RepoPathRef};
 use crossterm::event::{Event, KeyCode, KeyEvent};
 use easy_cast::Cast;
 use ratatui::{layout::Rect, widgets::Paragraph, Frame};

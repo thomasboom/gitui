@@ -1,7 +1,7 @@
 use std::time::Instant;
 
 use anyhow::Result;
-use asyncgit::{sync::utils::repo_work_dir, AsyncGitNotification};
+use asyncjj::{sync::utils::repo_work_dir, AsyncJjNotification};
 use crossbeam_channel::{never, tick, unbounded, Receiver};
 use scopetime::scope_time;
 
@@ -25,7 +25,7 @@ use crate::{
 pub struct Gitui {
 	app: crate::app::App,
 	rx_input: Receiver<InputEvent>,
-	rx_git: Receiver<AsyncGitNotification>,
+	rx_git: Receiver<AsyncJjNotification>,
 	rx_app: Receiver<AsyncAppNotification>,
 	rx_ticker: Receiver<Instant>,
 	rx_watcher: Receiver<()>,
@@ -129,7 +129,7 @@ impl Gitui {
 						if !matches!(
 							ev,
 							AsyncNotification::Git(
-								AsyncGitNotification::FinishUnchanged
+								AsyncJjNotification::FinishUnchanged
 							)
 						) {
 							self.app.update_async(ev)?;
@@ -181,7 +181,7 @@ impl Gitui {
 	#[cfg(test)]
 	fn wait_for_async_git_notification(
 		&self,
-		expected: AsyncGitNotification,
+		expected: AsyncJjNotification,
 	) {
 		loop {
 			let actual = self
@@ -205,9 +205,8 @@ impl Gitui {
 mod tests {
 	use std::path::PathBuf;
 
-	use asyncgit::{sync::RepoPath, AsyncGitNotification};
+	use asyncjj::{sync::RepoPath, AsyncJjNotification};
 	use crossterm::event::{KeyCode, KeyModifiers};
-	use git2_testing::repo_init_suffix;
 	use insta::assert_snapshot;
 	use ratatui::{backend::TestBackend, Terminal};
 
@@ -215,6 +214,34 @@ mod tests {
 		args::CliArgs, gitui::Gitui, keys::KeyConfig,
 		ui::style::Theme, AsyncNotification, Updater,
 	};
+
+	/// Init an empty jj repo in a temp dir (replaces git2-testing helper).
+	fn repo_init_suffix(
+		suffix: Option<&str>,
+	) -> (tempfile::TempDir, std::path::PathBuf) {
+		let temp_dir = suffix
+			.map_or_else(tempfile::TempDir::new, |_| {
+				tempfile::Builder::new().suffix("-insta").tempdir()
+			})
+			.expect("temp dir");
+		let path = temp_dir.path().to_path_buf();
+		let run = |args: &[&str]| {
+			let status = std::process::Command::new("jj")
+				.args(args)
+				.current_dir(&path)
+				.env("JJ_NO_PAGER", "1")
+				.status()
+				.expect("jj binary");
+			assert!(status.success());
+		};
+		run(&["git", "init"]);
+		run(&["config", "set", "--repo", "user.name", "name"]);
+		run(&["config", "set", "--repo", "user.email", "email"]);
+		std::fs::write(path.join("initial.txt"), "init\n")
+			.expect("write");
+		run(&["describe", "-m", "initial"]);
+		(temp_dir, path)
+	}
 
 	// Macro adapted from: https://insta.rs/docs/cmd/
 	macro_rules! apply_common_filters {
@@ -261,7 +288,7 @@ mod tests {
 		assert_snapshot!("app_loading", terminal.backend());
 
 		let event =
-			AsyncNotification::Git(AsyncGitNotification::Status);
+			AsyncNotification::Git(AsyncJjNotification::Status);
 		gitui.update_async(event);
 
 		gitui.draw(&mut terminal).unwrap();
@@ -275,7 +302,7 @@ mod tests {
 		);
 
 		gitui.wait_for_async_git_notification(
-			AsyncGitNotification::Log,
+			AsyncJjNotification::Log,
 		);
 
 		gitui.update();

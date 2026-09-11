@@ -12,7 +12,7 @@ use crate::{
 	strings, try_or_popup,
 };
 use anyhow::Result;
-use asyncgit::{
+use asyncjj::{
 	sync::{self, RepoPathRef},
 	StatusItem, StatusItemType,
 };

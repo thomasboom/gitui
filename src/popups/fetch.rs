@@ -10,7 +10,7 @@ use crate::{
 	ui::{self, style::SharedTheme},
 };
 use anyhow::Result;
-use asyncgit::{
+use asyncjj::{
 	asyncjob::AsyncSingleJob,
 	sync::{
 		cred::{
@@ -19,7 +19,7 @@ use asyncgit::{
 		},
 		RepoPathRef,
 	},
-	AsyncFetchJob, AsyncGitNotification, ProgressPercent,
+	AsyncFetchJob, AsyncJjNotification, ProgressPercent,
 };
 use crossterm::event::Event;
 use ratatui::{
@@ -95,8 +95,8 @@ impl FetchPopup {
 	}
 
 	///
-	pub fn update_git(&mut self, ev: AsyncGitNotification) {
-		if self.is_visible() && ev == AsyncGitNotification::Fetch {
+	pub fn update_git(&mut self, ev: AsyncJjNotification) {
+		if self.is_visible() && ev == AsyncJjNotification::Fetch {
 			self.update();
 		}
 	}

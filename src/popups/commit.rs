@@ -11,8 +11,8 @@ use crate::{
 	ui::style::SharedTheme,
 };
 use anyhow::{bail, Ok, Result};
-use asyncgit::sync::commit::commit_message_prettify;
-use asyncgit::{
+use asyncjj::sync::commit::commit_message_prettify;
+use asyncjj::{
 	cached,
 	sync::{
 		self, get_config_string, CommitId, HookResult,
@@ -281,7 +281,7 @@ impl CommitPopup {
 		match &self.mode {
 			Mode::Normal => sync::commit(&self.repo.borrow(), msg)?,
 			Mode::Amend(amend) => {
-				sync::amend(&self.repo.borrow(), *amend, msg)?
+				sync::amend(&self.repo.borrow(), amend.clone(), msg)?
 			}
 			Mode::Merge(ids) => {
 				sync::merge_commit(&self.repo.borrow(), msg, ids)?
@@ -290,8 +290,11 @@ impl CommitPopup {
 				sync::commit_revert(&self.repo.borrow(), msg)?
 			}
 			Mode::Reword(id) => {
-				let commit =
-					sync::reword(&self.repo.borrow(), *id, msg)?;
+				let commit = sync::reword(
+					&self.repo.borrow(),
+					id.clone(),
+					msg,
+				)?;
 				self.queue.push(InternalEvent::TabSwitchStatus);
 
 				commit
@@ -322,7 +325,7 @@ impl CommitPopup {
 	fn amend(&mut self) -> Result<()> {
 		if self.can_amend() {
 			let id = sync::get_head(&self.repo.borrow())?;
-			self.mode = Mode::Amend(id);
+			self.mode = Mode::Amend(id.clone());
 
 			let details =
 				sync::get_commit_details(&self.repo.borrow(), id)?;
@@ -367,7 +370,7 @@ impl CommitPopup {
 			self.input.set_text(
 				sync::get_commit_details(
 					&self.repo.borrow(),
-					reword_id,
+					reword_id.clone(),
 				)?
 				.message
 				.unwrap_or_default()

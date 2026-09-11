@@ -1,4 +1,4 @@
-use asyncgit::sync::{CommitId, CommitInfo};
+use asyncjj::sync::{CommitId, CommitInfo};
 use chrono::{DateTime, Duration, Local, Utc};
 use indexmap::IndexSet;
 use std::{rc::Rc, slice::Iter};
@@ -128,7 +128,7 @@ impl ItemBatch {
 
 		if !commits.is_empty() {
 			self.items.extend(commits.into_iter().map(|c| {
-				let id = c.id;
+				let id = c.id.clone();
 				let mut entry = LogEntry::from(c);
 				if highlighted.as_ref().is_some_and(|highlighted| {
 					highlighted.contains(&id)

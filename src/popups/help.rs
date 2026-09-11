@@ -8,7 +8,7 @@ use crate::{
 	strings, ui,
 };
 use anyhow::Result;
-use asyncgit::hash;
+use asyncjj::hash;
 use crossterm::event::Event;
 use itertools::Itertools;
 use ratatui::{

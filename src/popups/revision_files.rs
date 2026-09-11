@@ -10,7 +10,7 @@ use crate::{
 	AsyncNotification,
 };
 use anyhow::Result;
-use asyncgit::sync::CommitId;
+use asyncjj::sync::CommitId;
 use crossterm::event::Event;
 use ratatui::{layout::Rect, widgets::Clear, Frame};
 use std::path::Path;
@@ -48,7 +48,7 @@ impl RevisionFilesPopup {
 
 	///
 	pub fn open(&mut self, request: FileTreeOpen) -> Result<()> {
-		self.files.set_commit(request.commit_id)?;
+		self.files.set_commit(request.commit_id.clone())?;
 		self.open_request = Some(request);
 		self.show()?;
 
@@ -76,7 +76,7 @@ impl RevisionFilesPopup {
 			if let Some(revision) = self.files.revision() {
 				self.queue.push(InternalEvent::PopupStackPush(
 					StackablePopupOpen::FileTree(FileTreeOpen {
-						commit_id: revision.id,
+						commit_id: revision.id.clone(),
 					}),
 				));
 			}

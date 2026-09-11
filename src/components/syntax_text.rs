@@ -14,7 +14,7 @@ use crate::{
 	AsyncAppNotification, AsyncNotification, SyntaxHighlightProgress,
 };
 use anyhow::Result;
-use asyncgit::{
+use asyncjj::{
 	asyncjob::AsyncSingleJob,
 	sync::{self, RepoPathRef, TreeFile},
 	ProgressPercent,

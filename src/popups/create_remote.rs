@@ -1,5 +1,5 @@
 use anyhow::Result;
-use asyncgit::sync::{self, validate_remote_name, RepoPathRef};
+use asyncjj::sync::{self, validate_remote_name, RepoPathRef};
 use crossterm::event::Event;
 use easy_cast::Cast;
 use ratatui::{widgets::Paragraph, Frame};

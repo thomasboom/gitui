@@ -13,13 +13,13 @@ use crate::{
 	ui::style::{SharedTheme, Theme},
 };
 use anyhow::Result;
-use asyncgit::{
+use asyncjj::{
 	asyncjob::AsyncSingleJob,
 	sync::{
 		self, filter_commit_by_search, CommitId, LogFilterSearch,
 		LogFilterSearchOptions, RepoPathRef,
 	},
-	AsyncBranchesJob, AsyncCommitFilterJob, AsyncGitNotification,
+	AsyncBranchesJob, AsyncCommitFilterJob, AsyncJjNotification,
 	AsyncLog, AsyncTags, CommitFilesParams, FetchStatus,
 	ProgressPercent,
 };
@@ -72,7 +72,7 @@ pub struct Revlog {
 	queue: Queue,
 	visible: bool,
 	key_config: SharedKeyConfig,
-	sender: Sender<AsyncGitNotification>,
+	sender: Sender<AsyncJjNotification>,
 	theme: SharedTheme,
 }
 
@@ -153,22 +153,22 @@ impl Revlog {
 	///
 	pub fn update_git(
 		&mut self,
-		ev: AsyncGitNotification,
+		ev: AsyncJjNotification,
 	) -> Result<()> {
 		if self.visible {
 			match ev {
-				AsyncGitNotification::CommitFiles
-				| AsyncGitNotification::Log => self.update()?,
-				AsyncGitNotification::CommitFilter => {
+				AsyncJjNotification::CommitFiles
+				| AsyncJjNotification::Log => self.update()?,
+				AsyncJjNotification::CommitFilter => {
 					self.update_search_state();
 				}
-				AsyncGitNotification::Tags => {
+				AsyncJjNotification::Tags => {
 					if let Some(tags) = self.git_tags.last()? {
 						self.list.set_tags(tags);
 						self.update()?;
 					}
 				}
-				AsyncGitNotification::Branches => {
+				AsyncJjNotification::Branches => {
 					if let Some(local_branches) =
 						self.git_local_branches.take_last()
 					{
@@ -201,7 +201,7 @@ impl Revlog {
 	}
 
 	fn selected_commit(&self) -> Option<CommitId> {
-		self.list.selected_entry().map(|e| e.id)
+		self.list.selected_entry().map(|e| e.id.clone())
 	}
 
 	fn selected_commit_tags(
@@ -231,8 +231,9 @@ impl Revlog {
 
 	fn inspect_commit(&self) {
 		if let Some(commit_id) = self.selected_commit() {
-			let tags =
-				self.selected_commit_tags(Some(commit_id).as_ref());
+			let tags = self.selected_commit_tags(
+				Some(commit_id.clone()).as_ref(),
+			);
 			self.queue.push(InternalEvent::OpenPopup(
 				StackablePopupOpen::InspectCommit(
 					InspectCommitOpen::new_with_tags(commit_id, tags),
@@ -586,7 +587,8 @@ impl Component for Revlog {
 						self.queue.push(InternalEvent::OpenPopup(
 							StackablePopupOpen::CompareCommits(
 								InspectCommitOpen::new(
-									self.list.marked_commits()[0],
+									self.list.marked_commits()[0]
+										.clone(),
 								),
 							),
 						));
@@ -597,8 +599,10 @@ impl Component for Revlog {
 						self.queue.push(InternalEvent::OpenPopup(
 							StackablePopupOpen::CompareCommits(
 								InspectCommitOpen {
-									commit_id: marked[0],
-									compare_id: Some(marked[1]),
+									commit_id: marked[0].clone(),
+									compare_id: Some(
+										marked[1].clone(),
+									),
 									tags: None,
 								},
 							),

@@ -10,7 +10,7 @@ use crate::{
 	ui::{self, style::SharedTheme},
 };
 use anyhow::Result;
-use asyncgit::{
+use asyncjj::{
 	sync::{
 		cred::{
 			extract_username_password_for_push,
@@ -20,7 +20,7 @@ use asyncgit::{
 		remotes::get_default_remote_for_push,
 		HookResult, RepoPathRef,
 	},
-	AsyncGitNotification, AsyncPush, PushRequest, PushType,
+	AsyncJjNotification, AsyncPush, PushRequest, PushType,
 	RemoteProgress, RemoteProgressState,
 };
 use crossterm::event::Event;
@@ -149,7 +149,7 @@ impl PushPopup {
 		if let HookResult::NotOk(e) = hooks_pre_push(
 			&repo,
 			&remote,
-			&asyncgit::sync::PrePushTarget::Branch {
+			&asyncjj::sync::PrePushTarget::Branch {
 				branch: &self.branch,
 				delete: self.modifier.delete(),
 			},
@@ -180,9 +180,9 @@ impl PushPopup {
 	///
 	pub fn update_git(
 		&mut self,
-		ev: AsyncGitNotification,
+		ev: AsyncJjNotification,
 	) -> Result<()> {
-		if self.is_visible() && ev == AsyncGitNotification::Push {
+		if self.is_visible() && ev == AsyncJjNotification::Push {
 			self.update()?;
 		}
 

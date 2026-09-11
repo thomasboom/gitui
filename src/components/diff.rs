@@ -15,7 +15,7 @@ use crate::{
 	ui::style::SharedTheme,
 };
 use anyhow::Result;
-use asyncgit::{
+use asyncjj::{
 	hash,
 	sync::{self, diff::DiffLinePosition, RepoPathRef},
 	DiffLine, DiffLineType, FileDiff,

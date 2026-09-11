@@ -14,10 +14,10 @@ use crate::{
 	AsyncAppNotification, AsyncNotification, SyntaxHighlightProgress,
 };
 use anyhow::Result;
-use asyncgit::{
+use asyncjj::{
 	asyncjob::AsyncSingleJob,
 	sync::{BlameHunk, CommitId, FileBlame, RepoPathRef},
-	AsyncBlame, AsyncGitNotification, BlameParams,
+	AsyncBlame, AsyncJjNotification, BlameParams,
 };
 use crossbeam_channel::Sender;
 use crossterm::event::Event;
@@ -95,7 +95,7 @@ pub struct BlameFilePopup {
 	current_height: std::cell::Cell<usize>,
 	blame: Option<BlameProcess>,
 	app_sender: Sender<AsyncAppNotification>,
-	git_sender: Sender<AsyncGitNotification>,
+	git_sender: Sender<AsyncJjNotification>,
 	repo: RepoPathRef,
 }
 
@@ -429,9 +429,9 @@ impl BlameFilePopup {
 
 	fn update_git(
 		&mut self,
-		event: AsyncGitNotification,
+		event: AsyncJjNotification,
 	) -> Result<()> {
-		if self.is_visible() && event == AsyncGitNotification::Blame {
+		if self.is_visible() && event == AsyncJjNotification::Blame {
 			self.update()?;
 		}
 
@@ -788,7 +788,7 @@ impl BlameFilePopup {
 						file_blame.lines()[selected]
 							.0
 							.as_ref()
-							.map(|hunk| hunk.commit_id)
+							.map(|hunk| hunk.commit_id.clone())
 					});
 
 				self.table_state.set(table_state);

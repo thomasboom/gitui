@@ -10,7 +10,7 @@ use crate::{
 	ui::{self, style::SharedTheme},
 };
 use anyhow::Result;
-use asyncgit::{
+use asyncjj::{
 	cached,
 	sync::{CommitId, RepoPath, ResetType},
 };
@@ -88,6 +88,7 @@ impl ResetPopup {
 			),
 			Span::styled(
 				self.commit
+					.as_ref()
 					.map(|c| c.to_string())
 					.unwrap_or_default(),
 				self.theme.commit_hash(false),
@@ -126,11 +127,11 @@ impl ResetPopup {
 	}
 
 	fn reset(&mut self) {
-		if let Some(id) = self.commit {
+		if let Some(id) = self.commit.clone() {
 			try_or_popup!(
 				self,
 				"reset:",
-				asyncgit::sync::reset_repo(&self.repo, id, self.kind)
+				asyncjj::sync::reset_repo(&self.repo, id, self.kind)
 			);
 		}
 

@@ -9,7 +9,7 @@ use crate::{
 	AsyncNotification,
 };
 use anyhow::Result;
-use asyncgit::sync::{self, RepoPathRef};
+use asyncjj::sync::{self, RepoPathRef};
 
 pub struct FilesTab {
 	repo: RepoPathRef,

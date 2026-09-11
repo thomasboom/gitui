@@ -10,7 +10,7 @@ use crate::{
 	ui::{self, style::SharedTheme},
 };
 use anyhow::Result;
-use asyncgit::sync::{
+use asyncjj::sync::{
 	CommitId, LogFilterSearchOptions, RepoPathRef, SearchFields,
 	SearchOptions,
 };
@@ -134,7 +134,7 @@ impl LogSearchPopupPopup {
 				));
 			}
 			PopupMode::JumpCommitSha => {
-				let commit_id = self.jump_commit_id
+				let commit_id = self.jump_commit_id.clone()
                     .expect("Commit id must have value here because it's already validated");
 				self.queue.push(InternalEvent::SelectCommitInRevlog(
 					commit_id,

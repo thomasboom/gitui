@@ -12,7 +12,7 @@ use crate::{
 	AsyncNotification,
 };
 use anyhow::Result;
-use asyncgit::{
+use asyncjj::{
 	asyncjob::AsyncSingleJob,
 	remote_tags::AsyncRemoteTagsJob,
 	sync::cred::{
@@ -22,7 +22,7 @@ use asyncgit::{
 	sync::{
 		self, get_tags_with_metadata, RepoPathRef, TagWithMetadata,
 	},
-	AsyncGitNotification,
+	AsyncJjNotification,
 };
 
 use crossterm::event::Event;
@@ -251,7 +251,7 @@ impl Component for TagListPopup {
 						|tag| {
 							self.queue.push(
 								InternalEvent::SelectCommitInRevlog(
-									tag.commit_id,
+									tag.commit_id.clone(),
 								),
 							);
 							Ok(EventState::Consumed)
@@ -343,7 +343,7 @@ impl TagListPopup {
 	pub fn update(&mut self, ev: AsyncNotification) {
 		if matches!(
 			ev,
-			AsyncNotification::Git(AsyncGitNotification::RemoteTags)
+			AsyncNotification::Git(AsyncJjNotification::RemoteTags)
 		) {
 			if let Some(job) = self.async_remote_tags.take_last() {
 				if let Some(Ok(missing_remote_tags)) = job.result() {
@@ -353,7 +353,7 @@ impl TagListPopup {
 			}
 		} else if matches!(
 			ev,
-			AsyncNotification::Git(AsyncGitNotification::PushTags)
+			AsyncNotification::Git(AsyncJjNotification::PushTags)
 		) {
 			self.update_missing_remote_tags();
 		}

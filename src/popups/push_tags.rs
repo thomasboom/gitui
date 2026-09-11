@@ -10,7 +10,7 @@ use crate::{
 	ui::{self, style::SharedTheme},
 };
 use anyhow::Result;
-use asyncgit::{
+use asyncjj::{
 	sync::{
 		cred::{
 			extract_username_password, need_username_password,
@@ -19,7 +19,7 @@ use asyncgit::{
 		get_default_remote, hooks_pre_push, AsyncProgress,
 		HookResult, PushTagsProgress, RepoPathRef,
 	},
-	AsyncGitNotification, AsyncPushTags, PushTagsRequest,
+	AsyncJjNotification, AsyncPushTags, PushTagsRequest,
 };
 use crossterm::event::Event;
 use ratatui::{
@@ -90,7 +90,7 @@ impl PushTagsPopup {
 		if let HookResult::NotOk(e) = hooks_pre_push(
 			&repo,
 			&remote,
-			&asyncgit::sync::PrePushTarget::Tags,
+			&asyncjj::sync::PrePushTarget::Tags,
 			cred.clone(),
 		)? {
 			log::error!("pre-push hook failed: {e}");
@@ -114,9 +114,9 @@ impl PushTagsPopup {
 	///
 	pub fn update_git(
 		&mut self,
-		ev: AsyncGitNotification,
+		ev: AsyncJjNotification,
 	) -> Result<()> {
-		if self.is_visible() && ev == AsyncGitNotification::PushTags {
+		if self.is_visible() && ev == AsyncJjNotification::PushTags {
 			self.update()?;
 		}
 

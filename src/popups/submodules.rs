@@ -10,7 +10,7 @@ use crate::{
 	ui::{self, Size},
 };
 use anyhow::Result;
-use asyncgit::sync::{
+use asyncjj::sync::{
 	get_submodules, repo_dir, submodule_parent_info,
 	update_submodule, RepoPathRef, SubmoduleInfo,
 	SubmoduleParentInfo,
@@ -376,6 +376,7 @@ impl SubmodulesListPopup {
 					"{} ",
 					submodule
 						.head_id
+						.clone()
 						.unwrap_or_default()
 						.get_short_string()
 				),
@@ -407,7 +408,11 @@ impl SubmodulesListPopup {
 				let span_title_commit =
 					Span::styled("Commit:", theme.text(false, false));
 				let span_commit = Span::styled(
-					submodule.id.unwrap_or_default().to_string(),
+					submodule
+						.id
+						.clone()
+						.unwrap_or_default()
+						.to_string(),
 					theme.commit_hash(false),
 				);
 

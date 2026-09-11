@@ -1,5 +1,5 @@
 use anyhow::Result;
-use asyncgit::sync::{self, RepoPathRef};
+use asyncjj::sync::{self, RepoPathRef};
 use crossterm::event::Event;
 
 use crate::{

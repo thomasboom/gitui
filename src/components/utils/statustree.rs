@@ -2,7 +2,7 @@ use super::filetree::{
 	FileTreeItem, FileTreeItemKind, FileTreeItems, PathCollapsed,
 };
 use anyhow::Result;
-use asyncgit::StatusItem;
+use asyncjj::StatusItem;
 use std::{cell::Cell, cmp, collections::BTreeSet};
 
 //TODO: use new `filetreelist` crate
@@ -459,7 +459,7 @@ impl StatusTree {
 #[cfg(test)]
 mod tests {
 	use super::*;
-	use asyncgit::StatusItemType;
+	use asyncjj::StatusItemType;
 
 	fn string_vec_to_status(items: &[&str]) -> Vec<StatusItem> {
 		items

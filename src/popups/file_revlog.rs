@@ -12,11 +12,11 @@ use crate::{
 	ui::{draw_scrollbar, style::SharedTheme, Orientation},
 };
 use anyhow::Result;
-use asyncgit::{
+use asyncjj::{
 	sync::{
 		diff_contains_file, get_commits_info, CommitId, RepoPathRef,
 	},
-	AsyncDiff, AsyncGitNotification, AsyncLog, DiffParams, DiffType,
+	AsyncDiff, AsyncJjNotification, AsyncLog, DiffParams, DiffType,
 };
 use chrono::{DateTime, Local};
 use crossbeam_channel::Sender;
@@ -53,7 +53,7 @@ pub struct FileRevlogPopup {
 	git_diff: AsyncDiff,
 	theme: SharedTheme,
 	queue: Queue,
-	sender: Sender<AsyncGitNotification>,
+	sender: Sender<AsyncJjNotification>,
 	diff: DiffComponent,
 	visible: bool,
 	repo_path: RepoPathRef,
@@ -142,13 +142,13 @@ impl FileRevlogPopup {
 	///
 	pub fn update_git(
 		&mut self,
-		event: AsyncGitNotification,
+		event: AsyncJjNotification,
 	) -> Result<()> {
 		if self.visible {
 			match event {
-				AsyncGitNotification::CommitFiles
-				| AsyncGitNotification::Log => self.update()?,
-				AsyncGitNotification::Diff => self.update_diff()?,
+				AsyncJjNotification::CommitFiles
+				| AsyncJjNotification::Log => self.update()?,
+				AsyncJjNotification::Diff => self.update_diff()?,
 				_ => (),
 			}
 		}
@@ -230,7 +230,7 @@ impl FileRevlogPopup {
 						.saturating_sub(self.items.index_offset()),
 				)
 				.as_ref()
-				.map(|entry| entry.id)
+				.map(|entry| entry.id.clone())
 		});
 
 		self.table_state.set(table_state);

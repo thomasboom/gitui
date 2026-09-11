@@ -34,13 +34,13 @@ use crate::{
 	AsyncAppNotification, AsyncNotification,
 };
 use anyhow::{bail, Result};
-use asyncgit::{
+use asyncjj::{
 	sync::{
 		self,
 		utils::{repo_work_dir, undo_last_commit},
 		RepoPath, RepoPathRef,
 	},
-	AsyncGitNotification, PushType,
+	AsyncJjNotification, PushType,
 };
 use crossbeam_channel::Sender;
 use crossterm::event::{Event, KeyEvent};
@@ -127,7 +127,7 @@ pub struct Environment {
 	pub key_config: SharedKeyConfig,
 	pub repo: RepoPathRef,
 	pub options: SharedOptions,
-	pub sender_git: Sender<AsyncGitNotification>,
+	pub sender_git: Sender<AsyncJjNotification>,
 	pub sender_app: Sender<AsyncAppNotification>,
 }
 
@@ -154,7 +154,7 @@ impl App {
 	#[allow(clippy::too_many_lines)]
 	pub fn new(
 		cliargs: CliArgs,
-		sender_git: Sender<AsyncGitNotification>,
+		sender_git: Sender<AsyncJjNotification>,
 		sender_app: Sender<AsyncAppNotification>,
 		input: Input,
 		theme: Theme,

@@ -9,7 +9,7 @@ use crate::{
 	ui::{self, style::SharedTheme},
 };
 use anyhow::{anyhow, bail, Result};
-use asyncgit::sync::{
+use asyncjj::sync::{
 	get_config_string, utils::repo_work_dir, RepoPath,
 };
 use crossterm::{

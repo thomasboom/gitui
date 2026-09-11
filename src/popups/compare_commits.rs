@@ -13,9 +13,9 @@ use crate::{
 	strings,
 };
 use anyhow::Result;
-use asyncgit::{
+use asyncjj::{
 	sync::{self, commit_files::OldNew, CommitId, RepoPathRef},
-	AsyncDiff, AsyncGitNotification, CommitFilesParams, DiffParams,
+	AsyncDiff, AsyncJjNotification, CommitFilesParams, DiffParams,
 	DiffType,
 };
 use crossterm::event::Event;
@@ -205,12 +205,12 @@ impl CompareCommitsPopup {
 	///
 	pub fn update_git(
 		&mut self,
-		ev: AsyncGitNotification,
+		ev: AsyncJjNotification,
 	) -> Result<()> {
 		if self.is_visible() {
-			if ev == AsyncGitNotification::CommitFiles {
+			if ev == AsyncJjNotification::CommitFiles {
 				self.update()?;
-			} else if ev == AsyncGitNotification::Diff {
+			} else if ev == AsyncJjNotification::Diff {
 				self.update_diff()?;
 			}
 		}
@@ -222,10 +222,12 @@ impl CompareCommitsPopup {
 		let other = self
 			.open_request
 			.as_ref()
-			.and_then(|open| open.compare_id);
+			.and_then(|open| open.compare_id.clone());
 
-		let this =
-			self.open_request.as_ref().map(|open| open.commit_id);
+		let this = self
+			.open_request
+			.as_ref()
+			.map(|open| open.commit_id.clone());
 
 		Some(OldNew {
 			old: other?,

@@ -11,7 +11,7 @@ use crate::{
 	ui::{self, style::SharedTheme},
 };
 use anyhow::Result;
-use asyncgit::{
+use asyncjj::{
 	sync::{
 		self,
 		cred::{
@@ -21,7 +21,7 @@ use asyncgit::{
 		remotes::get_default_remote_for_fetch,
 		RepoPathRef,
 	},
-	AsyncGitNotification, AsyncPull, FetchRequest, RemoteProgress,
+	AsyncJjNotification, AsyncPull, FetchRequest, RemoteProgress,
 };
 
 use crossterm::event::Event;
@@ -109,8 +109,8 @@ impl PullPopup {
 	}
 
 	///
-	pub fn update_git(&mut self, ev: AsyncGitNotification) {
-		if self.is_visible() && ev == AsyncGitNotification::Pull {
+	pub fn update_git(&mut self, ev: AsyncJjNotification) {
+		if self.is_visible() && ev == AsyncJjNotification::Pull {
 			if let Err(error) = self.update() {
 				self.pending = false;
 				self.hide();

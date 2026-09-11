@@ -13,7 +13,7 @@ use crate::{
 	ui::{self, Size},
 };
 use anyhow::Result;
-use asyncgit::{
+use asyncjj::{
 	sync::{
 		self,
 		branch::{
@@ -24,7 +24,7 @@ use asyncgit::{
 		status::StatusType,
 		BranchInfo, BranchType, CommitId, RepoPathRef, RepoState,
 	},
-	AsyncGitNotification,
+	AsyncJjNotification,
 };
 use crossterm::event::{Event, KeyEvent};
 use ratatui::{
@@ -332,9 +332,9 @@ impl BranchListPopup {
 	///
 	pub fn update_git(
 		&mut self,
-		ev: AsyncGitNotification,
+		ev: AsyncJjNotification,
 	) -> Result<()> {
-		if self.is_visible() && ev == AsyncGitNotification::Push {
+		if self.is_visible() && ev == AsyncJjNotification::Push {
 			self.update_branches()?;
 		}
 
@@ -425,7 +425,7 @@ impl BranchListPopup {
 	fn get_selected_commit(&self) -> Option<CommitId> {
 		self.branches
 			.get(usize::from(self.selection))
-			.map(|b| b.top_commit)
+			.map(|b| b.top_commit.clone())
 	}
 
 	///

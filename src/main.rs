@@ -1,5 +1,5 @@
 //!
-//! The gitui program is a text-based UI for working with a Git repository.
+//! The gitui program is a text-based UI for working with a Jujutsu (`jj`) repository.
 //! The main navigation occurs between a number of tabs.
 //! When you execute commands, the program may use popups to communicate
 //! with the user. It is possible to customize the keybindings.
@@ -13,8 +13,8 @@
 //!   - [components] for visual elements used on tabs
 //!   - [popups] for temporary dialogs
 //!   - [ui] for tooling like scrollbars
-//! - Git Interface
-//!   - [asyncgit] (crate) for async operations on repository
+//! - Jujutsu Interface
+//!   - [asyncjj] (crate) for async operations on repository
 //! - Distribution and Documentation
 //!   - Project files
 //!   - Github CI
@@ -23,10 +23,8 @@
 //!
 //! ## Included Crates
 //! Some crates are part of the gitui repository:
-//! - [asyncgit] for Git operations in the background.
-//!   - git2-hooks (used by asyncgit).
-//!     - git2-testing (used by git2-hooks).
-//!   - invalidstring used by asyncgit for testing with invalid strings.
+//! - [asyncjj] for Jujutsu operations in the background.
+//!   - invalidstring used by asyncjj for testing with invalid strings.
 //! - [filetreelist] for a tree view of files.
 //! - [scopetime] for measuring execution time.
 //!
@@ -86,7 +84,7 @@ use crate::{
 };
 use anyhow::{anyhow, bail, Result};
 use app::QuitState;
-use asyncgit::{sync::RepoPath, AsyncGitNotification};
+use asyncjj::{sync::RepoPath, AsyncJjNotification};
 use backtrace::Backtrace;
 use crossbeam_channel::{Receiver, Select};
 use crossterm::{
@@ -141,7 +139,7 @@ pub enum AsyncNotification {
 	///
 	App(AsyncAppNotification),
 	///
-	Git(AsyncGitNotification),
+	Git(AsyncJjNotification),
 }
 
 #[derive(Clone, Copy, PartialEq)]
@@ -163,7 +161,7 @@ fn main() -> Result<()> {
 
 	let cliargs = process_cmdline()?;
 
-	asyncgit::register_tracing_logging();
+	asyncjj::register_tracing_logging();
 	ensure_valid_path(&cliargs.repo_path)?;
 
 	let key_config = KeyConfig::init(
@@ -274,7 +272,7 @@ fn draw<B: ratatui::backend::Backend>(
 }
 
 fn ensure_valid_path(repo_path: &RepoPath) -> Result<()> {
-	match asyncgit::sync::repo_open_error(repo_path) {
+	match asyncjj::sync::repo_open_error(repo_path) {
 		Some(e) => {
 			log::error!("invalid repo path: {e}");
 			bail!("invalid repo path: {e}")
@@ -285,7 +283,7 @@ fn ensure_valid_path(repo_path: &RepoPath) -> Result<()> {
 
 fn select_event(
 	rx_input: &Receiver<InputEvent>,
-	rx_git: &Receiver<AsyncGitNotification>,
+	rx_git: &Receiver<AsyncJjNotification>,
 	rx_app: &Receiver<AsyncAppNotification>,
 	rx_ticker: &Receiver<Instant>,
 	rx_notify: &Receiver<()>,

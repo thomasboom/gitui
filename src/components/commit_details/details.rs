@@ -12,7 +12,7 @@ use crate::{
 	ui::style::SharedTheme,
 };
 use anyhow::Result;
-use asyncgit::sync::{
+use asyncjj::sync::{
 	self, CommitDetails, CommitId, CommitMessage, RepoPathRef, Tag,
 };
 use crossterm::event::Event;

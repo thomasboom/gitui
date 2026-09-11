@@ -6,7 +6,7 @@ use crate::{
 	},
 	tabs::StashingOptions,
 };
-use asyncgit::{
+use asyncjj::{
 	sync::{
 		diff::DiffLinePosition, BranchInfo, CommitId,
 		LogFilterSearchOptions,

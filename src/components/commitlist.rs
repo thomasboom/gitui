@@ -13,7 +13,7 @@ use crate::{
 	ui::{calc_scroll_top, draw_scrollbar, Orientation},
 };
 use anyhow::Result;
-use asyncgit::sync::{
+use asyncjj::sync::{
 	self, checkout_commit, BranchDetails, BranchInfo, CommitId,
 	RepoPathRef, Tags,
 };
@@ -97,7 +97,7 @@ impl CommitList {
 
 	///
 	pub fn copy_items(&self) -> Vec<CommitId> {
-		self.commits.iter().copied().collect_vec()
+		self.commits.iter().cloned().collect_vec()
 	}
 
 	///
@@ -125,7 +125,7 @@ impl CommitList {
 	///
 	pub fn marked_commits(&self) -> Vec<CommitId> {
 		let (_, commits): (Vec<_>, Vec<CommitId>) =
-			self.marked.iter().copied().unzip();
+			self.marked.iter().cloned().unzip();
 
 		commits
 	}
@@ -165,7 +165,7 @@ impl CommitList {
 	///
 	pub fn checkout(&self) {
 		if let Some(commit_hash) =
-			self.selected_entry().map(|entry| entry.id)
+			self.selected_entry().map(|entry| entry.id.clone())
 		{
 			try_or_popup!(
 				self,
@@ -184,7 +184,7 @@ impl CommitList {
 
 		for local_branch in local_branches {
 			self.local_branches
-				.entry(local_branch.top_commit)
+				.entry(local_branch.top_commit.clone())
 				.or_default()
 				.push(local_branch);
 		}
@@ -199,7 +199,7 @@ impl CommitList {
 
 		for remote_branch in remote_branches {
 			self.remote_branches
-				.entry(remote_branch.top_commit)
+				.entry(remote_branch.top_commit.clone())
 				.or_default()
 				.push(remote_branch);
 		}
@@ -336,7 +336,7 @@ impl CommitList {
 
 		let new_selected_commit =
 			self.highlights.as_ref().and_then(|highlights| {
-				highlights.iter().nth(new_index).copied()
+				highlights.iter().nth(new_index).cloned()
 			});
 
 		if let Some(c) = new_selected_commit {
@@ -389,7 +389,7 @@ impl CommitList {
 
 	fn mark(&mut self) {
 		if let Some(e) = self.selected_entry() {
-			let id = e.id;
+			let id = e.id.clone();
 			let selected = self
 				.selection
 				.saturating_sub(self.items.index_offset());
@@ -708,7 +708,7 @@ impl CommitList {
 	}
 
 	fn selection_highlighted(&self) -> bool {
-		let commit = self.commits[self.selection];
+		let commit = self.commits[self.selection].clone();
 
 		self.highlights
 			.as_ref()
@@ -751,7 +751,7 @@ impl CommitList {
 					.iter()
 					.skip(want_min)
 					.take(SLICE_SIZE)
-					.copied()
+					.cloned()
 					.collect_vec()
 					.as_slice(),
 				self.current_size()
@@ -896,7 +896,7 @@ impl Component for CommitList {
 
 #[cfg(test)]
 mod tests {
-	use asyncgit::sync::CommitInfo;
+	use asyncjj::sync::CommitInfo;
 
 	use super::*;
 
@@ -956,6 +956,7 @@ mod tests {
 			time: 0,
 			author: String::default(),
 			id: CommitId::default(),
+			change_id: asyncjj::sync::ChangeId::default(),
 		};
 		// This just creates a sequence of fake ordered ids
 		// 0000000000000000000000000000000000000000
@@ -991,7 +992,15 @@ mod tests {
 		marked_indices
 			.iter()
 			.map(|idx| {
-				(*idx, cl.items.iter().nth(*idx - offset).unwrap().id)
+				(
+					*idx,
+					cl.items
+						.iter()
+						.nth(*idx - offset)
+						.unwrap()
+						.id
+						.clone(),
+				)
 			})
 			.collect()
 	}
